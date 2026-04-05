@@ -162,8 +162,18 @@
 
     .sign-out-row {
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: space-between;
       margin-top: 16px;
+    }
+
+    #user-identifier {
+      font-size: 0.82rem;
+      color: #555;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 60%;
     }
 
     /* ── Legal note ── */
@@ -211,6 +221,7 @@
     <hr class="divider" />
 
     <div class="sign-out-row">
+      <span id="user-identifier"></span>
       <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
     </div>
   </div>
@@ -265,6 +276,8 @@
 
     if (user) {
       showAuthPanel();
+      document.getElementById("user-identifier").textContent =
+        user.displayName || user.email || user.uid;
       user.getIdToken().then(displayToken);
     } else {
       showSignInPanel();
