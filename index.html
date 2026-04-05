@@ -274,8 +274,10 @@
   // ── UI helpers ─────────────────────────────────────────────
   function showSignInPanel() {
     document.getElementById("auth-panel").style.display = "none";
+    document.getElementById("token-box").value = "";
     document.getElementById("firebaseui-auth-container").style.display = "block";
     clearInterval(expiryInterval);
+    ui.reset(); // ensure a clean widget state before (re)starting
     ui.start("#firebaseui-auth-container", uiConfig);
   }
 
@@ -386,6 +388,7 @@
 
   // ── Sign out ───────────────────────────────────────────────
   function signOut() {
+    ui.reset(); // cancel any pending FirebaseUI operation before signing out
     firebase.auth().signOut().catch(function (err) {
       console.error("Sign-out error:", err);
     });
