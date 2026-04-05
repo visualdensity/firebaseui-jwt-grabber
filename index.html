@@ -222,22 +222,13 @@
   &nbsp;— Replace <code>#</code> hrefs before production use.
 </p>
 
-<script>
-  // ─────────────────────────────────────────────────────────────
-  // FIREBASE CONFIG — replace these values with your project's
-  // credentials from the Firebase Console › Project Settings
-  // ─────────────────────────────────────────────────────────────
-  const firebaseConfig = {
-    apiKey:            "API_KEY",
-    authDomain:        "DOMAIN.firebaseapp.com",
-    projectId:         "PROJECT_ID",
-    storageBucket:     "BUCKET_NAME.firebasestorage.app",
-    messagingSenderId: "MESSAGE_SENDER_ID",
-    appId:             "APP_ID",
-  };
-  // ─────────────────────────────────────────────────────────────
+<!-- Firebase project config — loaded from secrets.js (gitignored). -->
+<!-- Copy secrets.example.js → secrets.js and fill in your credentials. -->
+<script src="/secrets.js"></script>
 
-  // Detect placeholder config
+<script>
+  // Detect placeholder config (apiKey matches the example template value)
+
   const isPlaceholder = firebaseConfig.apiKey === "YOUR_API_KEY";
   if (isPlaceholder) {
     document.getElementById("config-warning").style.display = "block";

@@ -15,9 +15,11 @@ A single-file static web tool (`index.html`) that uses Google's FirebaseUI Auth 
 
 ## Firebase Configuration
 
-The `firebaseConfig` block is at the top of the `<script>` section in `index.html`. The project is currently wired to `sphygmo-bed91`. To retarget a different project, replace the six fields (`apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`).
+`firebaseConfig` lives in `secrets.js` (gitignored — never committed). `secrets.example.js` is the committed template with placeholder values.
 
-A runtime check detects placeholder values and shows a warning banner — do not remove this check.
+To retarget a different Firebase project, edit the six fields in `secrets.js` (`apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`). Do not edit `secrets.example.js` with real credentials.
+
+`index.html` loads `secrets.js` via `<script src="secrets.js">` before its own inline script. A runtime check detects placeholder values (`apiKey === "YOUR_API_KEY"`) and shows a warning banner — do not remove this check.
 
 ## Key Functional Requirements
 
@@ -32,8 +34,9 @@ A runtime check detects placeholder values and shows a warning banner — do not
 
 ## Making Changes
 
-- All logic lives in `index.html`. There is no separate JS or CSS file.
-- CDN load order is critical: `firebase-app-compat` → `firebase-auth-compat` → `firebase-ui-auth`. Do not reorder.
+- All application logic lives in `index.html`. The only separate JS file is `secrets.js` (config only).
+- **Never put credentials in `index.html`** — all Firebase config must stay in `secrets.js`.
+- CDN load order is critical: `firebase-app-compat` → `firebase-auth-compat` → `firebase-ui-auth` → `secrets.js` → inline script. Do not reorder.
 - Do not switch from compat-mode Firebase SDK to the modular API — FirebaseUI v6 requires compat.
 - The `signInSuccessWithAuthResult` callback must return `false` to suppress FirebaseUI's automatic redirect.
 

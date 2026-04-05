@@ -25,7 +25,13 @@ cd firebaseui-jwt-grabber
 
 ### 2. Add your Firebase config
 
-Open `index.html` and find the `firebaseConfig` block near the bottom of the file:
+Copy the example secrets file and fill in your credentials:
+
+```bash
+cp secrets.example.js secrets.js
+```
+
+Then open `secrets.js` and replace the placeholder values:
 
 ```js
 const firebaseConfig = {
@@ -38,8 +44,10 @@ const firebaseConfig = {
 };
 ```
 
-Replace each value with your project's credentials from:  
+Credentials are in:  
 **Firebase Console → Project Settings → Your apps → SDK setup and configuration**
+
+> `secrets.js` is listed in `.gitignore` and will never be committed.
 
 ### 3. Add your domain to Firebase authorized domains
 
@@ -52,12 +60,13 @@ Google sign-in requires your serving domain to be allowlisted.
 
 ## Running locally with Podman + nginx
 
-Serve `index.html` over HTTP so Firebase Auth (especially Google popup sign-in) works correctly.
+Serve the files over HTTP so Firebase Auth (especially Google popup sign-in) works correctly.
 
 ```bash
 podman run --rm \
   -p 8080:80 \
   -v "$(pwd)/index.html:/usr/share/nginx/html/index.html:ro" \
+  -v "$(pwd)/secrets.js:/usr/share/nginx/html/secrets.js:ro" \
   nginx:alpine
 ```
 
@@ -69,7 +78,8 @@ Then open [http://localhost:8080](http://localhost:8080) in your browser.
 |------|---------|
 | `--rm` | Remove container automatically when stopped |
 | `-p 8080:80` | Map host port 8080 → container port 80 |
-| `-v .../index.html:...:ro` | Mount the file read-only into nginx's web root |
+| `-v .../index.html:...:ro` | Mount `index.html` read-only into nginx's web root |
+| `-v .../secrets.js:...:ro` | Mount `secrets.js` read-only into nginx's web root |
 | `nginx:alpine` | Lightweight official nginx image |
 
 To stop the container, press `Ctrl+C` in the terminal where it's running.
@@ -108,7 +118,10 @@ curl -H "Authorization: Bearer <paste-token-here>" https://your-api.example.com/
 → The `navigator.clipboard` API requires a secure context (HTTPS or `localhost`). If opening `index.html` directly as a `file://` URL, the fallback `execCommand` copy is used instead — select the token manually if that also fails.
 
 **Config warning banner is showing**  
-→ You haven't replaced the placeholder values in `firebaseConfig`. See [Setup](#setup) above.
+→ `secrets.js` is missing or still contains placeholder values. Run `cp secrets.example.js secrets.js` and fill in your credentials. See [Setup](#setup) above.
+
+**`secrets.js` not found / blank page**  
+→ nginx must be able to serve both `index.html` and `secrets.js`. Ensure both `-v` mounts are present in your `podman run` command.
 
 ---
 
@@ -116,9 +129,11 @@ curl -H "Authorization: Bearer <paste-token-here>" https://your-api.example.com/
 
 ```
 firebaseui-jwt-grabber/
-├── index.html   # The entire application
-├── AGENTS.md    # Context for AI coding agents
-└── README.md    # This file
+├── index.html          # The entire application
+├── secrets.example.js  # Config template — committed, safe to share
+├── secrets.js          # Your real credentials — gitignored, never committed
+├── AGENTS.md           # Context for AI coding agents
+└── README.md           # This file
 ```
 
 ---
