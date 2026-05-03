@@ -70,6 +70,12 @@ podman run --rm \
   nginx:alpine
 ```
 
+**Copy & Pasta**
+
+```bash
+podman run --name some-nginx -p 8080:80 -v /path/firebaseui-jwt-grabber:/usr/share/nginx/html:ro -d nginx
+```
+
 Then open [http://localhost:8080](http://localhost:8080) in your browser.
 
 **Flags explained:**
