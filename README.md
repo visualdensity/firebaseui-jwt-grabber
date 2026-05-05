@@ -161,4 +161,6 @@ firebaseui-jwt-grabber/
 
 ## Legal
 
+This project is licensed under the [MIT License](LICENSE).
+
 `tosUrl` and `privacyPolicyUrl` in the FirebaseUI config are set to `#` (placeholder). Replace these with real URLs if you deploy this tool for others to use.
