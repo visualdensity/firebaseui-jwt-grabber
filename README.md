@@ -1,6 +1,9 @@
 # FirebaseUI JWT Grabber
 
+**Note:** This tool is developed using LLM coding agents with Kimi K models.
+
 A minimal single-page tool for Firebase developers. Sign in with Google or Email/Password via FirebaseUI and instantly retrieve your Firebase ID token (JWT) to use in API testing tools like Postman or curl.
+
 
 No backend. No build step. One file.
 
@@ -163,4 +166,3 @@ firebaseui-jwt-grabber/
 
 This project is licensed under the [MIT License](LICENSE).
 
-`tosUrl` and `privacyPolicyUrl` in the FirebaseUI config are set to `#` (placeholder). Replace these with real URLs if you deploy this tool for others to use.
