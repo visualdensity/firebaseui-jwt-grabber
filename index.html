@@ -176,6 +176,27 @@
       max-width: 60%;
     }
 
+    /* ── Environment selector ── */
+    .env-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .env-selector label {
+      font-size: 0.85rem;
+      color: #555;
+      font-weight: 500;
+    }
+    .env-selector select {
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+    }
+
     /* ── Legal note ── */
     .legal-note {
       font-size: 0.75rem;
@@ -192,10 +213,16 @@
   <h1>FirebaseUI JWT Grabber</h1>
   <p class="subtitle">Sign in to retrieve your Firebase ID token for API testing.</p>
 
-  <!-- Shown when firebaseConfig still has placeholder values -->
+  <!-- Environment selector -->
+  <div class="env-selector">
+    <label for="env-select">Environment</label>
+    <select id="env-select"></select>
+  </div>
+
+  <!-- Shown when firebaseConfigs still has placeholder values -->
   <div id="config-warning" style="display:none">
     <strong>Configuration required</strong>
-    Replace the placeholder values in <code>firebaseConfig</code> inside this file
+    Replace the placeholder values in <code>firebaseConfigs</code> inside <code>secrets.js</code>
     with your Firebase project credentials before use.
   </div>
 
@@ -233,20 +260,62 @@
   &nbsp;— Replace <code>#</code> hrefs before production use.
 </p>
 
-<!-- Firebase project config — loaded from secrets.js (gitignored). -->
+<!-- Firebase project configs — loaded from secrets.js (gitignored). -->
 <!-- Copy secrets.example.js → secrets.js and fill in your credentials. -->
 <script src="/secrets.js"></script>
 
 <script>
-  // Detect placeholder config (apiKey matches the example template value)
+  // ── Environment selection ──────────────────────────────────
 
-  const isPlaceholder = firebaseConfig.apiKey === "YOUR_API_KEY";
+  const ENV_STORAGE_KEY = "jwt-grabber-env";
+
+  function getEnvNames() {
+    if (typeof firebaseConfigs !== "object" || firebaseConfigs === null) return [];
+    return Object.keys(firebaseConfigs);
+  }
+
+  function populateEnvDropdown() {
+    const select = document.getElementById("env-select");
+    const names = getEnvNames();
+    const saved = localStorage.getItem(ENV_STORAGE_KEY);
+    select.innerHTML = "";
+
+    names.forEach(function (name) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      if (name === saved || (!saved && select.children.length === 0)) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+  }
+
+  function getSelectedConfig() {
+    const names = getEnvNames();
+    const select = document.getElementById("env-select");
+    const name = select.value || names[0];
+    return firebaseConfigs[name] || null;
+  }
+
+  populateEnvDropdown();
+
+  const activeConfig = getSelectedConfig();
+  const isPlaceholder = !activeConfig || activeConfig.apiKey === "YOUR_API_KEY";
   if (isPlaceholder) {
     document.getElementById("config-warning").style.display = "block";
   }
 
   // Initialise Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (activeConfig) {
+    firebase.initializeApp(activeConfig);
+  }
+
+  // Persist environment choice and reload on change
+  document.getElementById("env-select").addEventListener("change", function (e) {
+    localStorage.setItem(ENV_STORAGE_KEY, e.target.value);
+    location.reload();
+  });
 
   // ── FirebaseUI config ──────────────────────────────────────
   const uiConfig = {

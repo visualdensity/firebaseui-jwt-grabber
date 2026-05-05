@@ -31,18 +31,30 @@ Copy the example secrets file and fill in your credentials:
 cp secrets.example.js secrets.js
 ```
 
-Then open `secrets.js` and replace the placeholder values:
+Then open `secrets.js` and replace the placeholder values for each environment:
 
 ```js
-const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID",
+const firebaseConfigs = {
+  "DEV": {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID",
+  },
+  "PROD": {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID",
+  },
 };
 ```
+
+Add as many environments as you need — the dropdown in the UI will list all keys automatically.
 
 Credentials are in:  
 **Firebase Console → Project Settings → Your apps → SDK setup and configuration**
@@ -97,15 +109,18 @@ To stop the container, press `Ctrl+C` in the terminal where it's running.
 ## Usage
 
 1. Open the page in your browser
-2. Sign in with **Google** (popup) or **Email/Password**
-3. Your JWT is displayed immediately after sign-in
-4. Click **Copy Token** to copy it to your clipboard
-5. Paste into your API client (Postman, curl, Insomnia, etc.)
+2. Select the **environment** you want from the dropdown (e.g. `DEV` or `PROD`)
+3. Sign in with **Google** (popup) or **Email/Password**
+4. Your JWT is displayed immediately after sign-in
+5. Click **Copy Token** to copy it to your clipboard
+6. Paste into your API client (Postman, curl, Insomnia, etc.)
 
 ```bash
 # Example curl usage with the copied token
 curl -H "Authorization: Bearer <paste-token-here>" https://your-api.example.com/endpoint
 ```
+
+**Switching environments** — Select a different environment from the dropdown and the page will reload with that config. If you are signed in, you will be signed out first.
 
 **Refresh Token** fetches a fresh JWT on demand (tokens expire after 1 hour).  
 **Sign Out** returns you to the sign-in screen.
@@ -124,7 +139,7 @@ curl -H "Authorization: Bearer <paste-token-here>" https://your-api.example.com/
 → The `navigator.clipboard` API requires a secure context (HTTPS or `localhost`). If opening `index.html` directly as a `file://` URL, the fallback `execCommand` copy is used instead — select the token manually if that also fails.
 
 **Config warning banner is showing**  
-→ `secrets.js` is missing or still contains placeholder values. Run `cp secrets.example.js secrets.js` and fill in your credentials. See [Setup](#setup) above.
+→ `secrets.js` is missing or still contains placeholder values. Run `cp secrets.example.js secrets.js` and fill in your credentials for each environment. See [Setup](#setup) above.
 
 **`secrets.js` not found / blank page**  
 → nginx must be able to serve both `index.html` and `secrets.js`. Ensure both `-v` mounts are present in your `podman run` command.
